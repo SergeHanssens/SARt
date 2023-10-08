@@ -1,0 +1,41 @@
+import ee
+import folium
+
+# Initialize Earth Engine
+ee.Initialize()
+
+# Create a map object
+map = folium.Map(location=[0, 0], zoom_start=1)
+
+# Add a layer from Google Earth Engine
+image = ee.ImageCollection("LANDSAT/LC08/C01/T1_SR")
+layer = folium.TileLayer(image=image, attribution="Google Earth Engine")
+map.add_layer(layer)
+
+# Add a control to select a date
+date_input = folium.Choropleth(
+    data=image,
+    colormap="Blues",
+    fill_opacity=0.5,
+    line_color="white",
+    line_width=0.7,
+    legend_name="Date",
+    index="system:time_start",
+    range_=["2015-01-01", "2023-07-20"],
+)
+date_input.add_to(map)
+
+# Add a control to select a band
+band_input = folium.Choropleth(
+    data=image,
+    colormap="Spectral",
+    fill_opacity=0.5,
+    line_color="white",
+    line_width=0.7,
+    legend_name="Band",
+    index="B4",
+)
+band_input.add_to(map)
+
+# Display the map
+map.save("index.html")
